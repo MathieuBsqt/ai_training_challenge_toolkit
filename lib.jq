@@ -1,29 +1,62 @@
 def nonfinal_state:
-  .status.state != "FAILED" and .status.state != "INTERRUPTED" and .status.state != "DONE" and .status.state != "ERROR"
+  .status.state  | . != "FAILED" and . != "INTERRUPTED" and . != "DONE" and . != "ERROR"
 ;
 
-def final_state:
-  nonfinal_state | not 
+def is_launching:
+  .status.state  | . == "INITIALIZING" or . == "PENDING"
 ;
 
-def has_token($team_name):
-  .spec.labels.kili_challenge_team==$team_name
+def is_stopping:
+  .status.state  | . == "TIMEOUT" or . == "INTERRUPTING" or . == "FINALIZING"
 ;
+
 
 def list_jobs($jobs; $tokens):
-   $tokens | .[].spec.name | . as $team_name | (
+   $jobs | .[] | .spec.labels.kili_challenge_team as $team_name | {
+        id: .id,
+        name: $team_name,
+        state: .status.state,
+        status: (if nonfinal_state then "WORKING" else "SHUT_DOWN" end),
+        orphan: ($tokens | map(.spec.name) | contains([$team_name]) | not),
+   }
+;
+
+
+def notebooks($jobs; $tokens):
+    [list_jobs($jobs; $tokens)] | group_by(.name) | map({
+        name: .[0].name,
+        status: (if map(.status) | unique | length == 1 then .[0].status else "WORKING" end),
+        orphan: .[0].orphan,
+        n_total: length,
+        n_working: map(select(.status == "WORKING") | .id) | length,
+        n_shut_down: map(select(.status == "SHUT_DOWN") | .id) | length,
+        working_jobs: map(select(.status == "WORKING")) | map({id:.id, state:.state}) ,
+    })
+;
+
+def missingjobs($jobs; $tokens):
+    $tokens | [$jobs | .[].spec.name] as $j | map(.spec.name | select(. as $n | ($j | contains([$n]) | not )) ) 
+;
+
+def pool_status($jobs; $tokens):
     {
-        team: .,
-        running: (if (($jobs | map(select(has_token($team_name)) | select(nonfinal_state))) | length)>0 then "WORKING" else "BROKEN" end),
+        running: notebooks($jobs; $tokens) | map(select(.status == "WORKING" and .n_working==1 and .working_jobs[0].state == "RUNNING") | .name),
+        working_duplicates: notebooks($jobs; $tokens) | map(select(.status == "WORKING" and .n_working!=1) | .name),
+        shut_down_to_relaunch: notebooks($jobs; $tokens) | map(select(.status == "SHUT_DOWN" and .orphan == false) | .name),
+        orphans: notebooks($jobs; $tokens) | map(select(.status == "WORKING" and .orphan == true) | .name),
+        missingjobs: missingjobs($jobs; $tokens),
+        launching: [$jobs | map(select(is_launching)) |.[].spec.name],
+        stopping: [$jobs | map(select(is_stopping)) |.[].spec.name],
+
     }
-   )
 ;
 
-def list_broken_jobs($jobs; $tokens):
-  list_jobs($jobs; $tokens) | select(.running == "BROKEN")
+def pool_status_with_counts( $jobs; $tokens):
+    pool_status($jobs; $tokens) | to_entries | map({key:.key, value:(.value|length)}) | from_entries
 ;
 
-def list_working_jobs($jobs; $tokens):
-  list_jobs($jobs; $tokens) | select(.running == "WORKING")
-;
 
+def teams_to_start_or_restart($jobs; $tokens):
+    pool_status($jobs; $tokens) | 
+    (.missingjobs + .shut_down_to_relaunch) | .[]
+;

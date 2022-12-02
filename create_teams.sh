@@ -2,6 +2,8 @@
 set -eu
 set -o pipefail
 
+source ./lib.sh
+
 # returns an error if there is not one and only one argument
 if [ $# -lt 2 ]; then
     echo "Usage: <PREFIX> <TEAM_NAME_1> <TEAM_NAME_2> ..."
@@ -20,5 +22,5 @@ echo "TEAM_NAMES: $@"
         team_name="teams_${PREFIX}_${team_number}"
         ovhai token create -o json -r "read" -l "kili_challenge_team=$team_name" $team_name
     done
-) | jq  '{team:.spec.name, token:.status.value}' >> teams.json
+) | jq  '{team:.spec.name, token:.status.value}' >> $TEAMS_JSON
 

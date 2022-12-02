@@ -75,3 +75,7 @@ def export_list($jobs; $tokens; $teams):
     })
 ;
 
+def list_running_ids($jobs; $tokens):
+    notebooks($jobs; $tokens) | .[] | select(.status == "WORKING" and .n_working==1 and .working_jobs[0].state == "RUNNING") | .working_jobs[0].id 
+;
+

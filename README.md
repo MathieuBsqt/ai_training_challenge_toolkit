@@ -117,3 +117,27 @@ Depending on the moment you check the pool status, you may see launching or runn
 ```
 
 
+# Gettting the list of URLs with tokens
+
+To give them to the challengers : 
+
+```
+% ./export_list.sh > export_GRA.json 
+```
+
+# Know when the workspace initialization are over 
+
+
+```
+./list_workspace_init.sh
+[
+  {
+    "workspace_init_status": "ongoing",
+    "nb": 10
+  }
+]
+```
+
+here we habe 10 initialization ongoing, and 0 success
+
+

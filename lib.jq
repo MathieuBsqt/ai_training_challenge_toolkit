@@ -66,7 +66,7 @@ def teams_to_start_or_restart($jobs; $tokens):
 ;
 
 def export_list($jobs; $tokens; $teams):
-    notebooks($jobs; $tokens) | map(select(.status == "WORKING" and .n_working==1 and .working_jobs[0].state == "RUNNING") |
+    notebooks($jobs; $tokens) | map(select(.status == "WORKING" and .n_working==1 and (.working_jobs[0].state | (. == "RUNNING" or . == "INITIALIZING"))) |
     .name as $name |
     {
         name: .name,

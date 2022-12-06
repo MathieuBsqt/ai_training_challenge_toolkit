@@ -11,4 +11,6 @@ fi
 
 IMAGE=$1
 
-jq -r -n --slurpfile jobs <( ovhai job list  -o json )  --slurpfile tokens <( ovhai token list  -o json ) 'include "lib"; teams_to_start_or_restart($jobs;$tokens)' | xargs -n 1 -L 1 -I {} bash -c "echo run {} ;  ovhai job run --name "{}" --gpu 1 --label 'kili_challenge_team={}' -o json -v "kili_{}@GRA:/workspace:RWD:cache" $IMAGE > /dev/null"
+source lib.sh
+
+jq -r -n --slurpfile jobs <( ovhai job list  -o json )  --slurpfile tokens <( ovhai token list  -o json ) 'include "lib"; teams_to_start_or_restart($jobs;$tokens)' | xargs -S 10000 -n 1 -L 1 -I {} bash -c "echo run {} ; ovhai job run --name "{}" --gpu 1 --label 'kili_challenge_team={}' -o json -v "kili_{}@GRA:/backup:RO:cache"  -v "kili_fixed_{}@${REGION}:/workspace:RWD:cache" $IMAGE > /dev/null"

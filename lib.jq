@@ -1,5 +1,5 @@
 def nonfinal_state:
-  .status.state  | . != "FAILED" and . != "INTERRUPTED" and . != "DONE" and . != "ERROR"
+  .status.state  | . != "FAILED" and . != "INTERRUPTED" and . != "DONE" and . != "ERROR" and . != "FINALIZING"
 ;
 
 def is_launching:

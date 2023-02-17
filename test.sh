@@ -7,4 +7,4 @@ if [ $# -ne 0 ]; then
     exit 1
 fi
 
-jq -n --slurpfile jobs <( ovhai job list  -o json )  --slurpfile tokens <( ovhai token list  -o json ) 'include "lib"; test($jobs;$tokens)'
+jq -n --argfile jobs <( ovhai job list  -o json )  --argfile tokens <( ovhai token list  -o json ) 'include "lib"; test($jobs;$tokens)'

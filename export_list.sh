@@ -9,4 +9,4 @@ if [ $# -ne 0 ]; then
     exit 1
 fi
 
-jq -n --slurpfile jobs <( ovhai job list  -o json )  --slurpfile tokens <( ovhai token list  -o json )  --slurpfile teams $TEAMS_JSON 'include "lib"; export_list($jobs;$tokens;$teams)'
+jq -n --argfile jobs <( ovhai job list  -o json )  --argfile tokens <( ovhai token list  -o json )  --argfile teams $TEAMS_JSON 'include "lib"; export_list($jobs;$tokens;$teams)'

@@ -46,6 +46,15 @@ This creates the **teams_GRA.json** or **teams_BHS.json** that contrains the tok
 }
 ````
 
+Here is the meaning for the different categories : 
+- running : jobs that are assigned to a team, running
+- working_duplicates : running jobs but that are duplicated (more than 1 job for 1 team)
+- shut_down_to_relaunch : jobs stopped, that could be relaunched
+- orphans : jobs running, but with no corresponding team (to handle manually)
+- missingjobs : teams that have no jobs yet (not even stopped)
+- launching : jobs that are in launching status, will eventually become "running"
+- stopping : jobs that are in stopping status, will become "shut_down_to_relaunch" 
+
 here we have 100 jobs that need to be launched (the 100 teams that we created earlier)
 
 You can get the detail instead of the counts : 
@@ -138,6 +147,9 @@ To give them to the challengers :
 ]
 ```
 
-here we habe 10 initialization ongoing, and 0 success
+We have 2 possible statuses :
+- ongoing : the job is running, but still initializing its workspace on the CephFs
+- success : the job is running and ready to be used by the user(s)
 
+In the exemple above for instance, we have 10 initialization ongoing, and 0 success
 

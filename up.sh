@@ -20,7 +20,7 @@ IFS=$'\n'
 for i in $(jq -r -n --argfile jobs <( ovhai job list  -o json )  --argfile tokens <( ovhai token list  -o json ) 'include "lib"; teams_to_start_or_restart($jobs;$tokens)')
 do 
     echo "run $i"
-    ovhai job run --name $i --label ai_challenge_team=$i -v ai_volume_$i@${REGION}/workspace.tar:/workspace:RWD:cache $IMAGE > /dev/null
+    ovhai job run --name $i --label ai_challenge_team=$i -v ai_volume_$i@${REGION}/workspace.tar:/workspace:RWD:cache $@ $IMAGE > /dev/null
 done
 
 

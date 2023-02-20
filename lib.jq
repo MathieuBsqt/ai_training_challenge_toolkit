@@ -11,7 +11,7 @@ def is_stopping:
 ;
 
 def select_only_team_tokens:
-   .[] | select(.spec.labelSelector | contains("ai_challenge_team"))
+   select(.spec.labelSelector | contains("ai_challenge_team"))
 ;
 
 def list_jobs($jobs; $tokens):

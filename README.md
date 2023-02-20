@@ -30,6 +30,7 @@ ovhai login
 ````
 
 This creates the **teams_GRA.json** or **teams_BHS.json** that contrains the tokens. Keep it private.
+Replace "prefix" with any prefix you want to use in your token names, like the name of your challenge.
 
 # Getting the pool status 
 
@@ -103,6 +104,23 @@ run teams_prefix_2
 run teams_prefix_1
 ...
 ```
+
+You can also add other arguments to the underlying "ovhai job run" like this : 
+```
+% ./up.sh dockerhubuser/notebookimage --cpu 5
+run teams_prefix_10
+run teams_prefix_9
+run teams_prefix_8
+run teams_prefix_7
+run teams_prefix_6
+run teams_prefix_5
+run teams_prefix_4
+run teams_prefix_3
+run teams_prefix_2
+run teams_prefix_1
+...
+```
+
 
 Depending on the moment you check the pool status, you may see launching or running jobs now. Here after some time : 
 

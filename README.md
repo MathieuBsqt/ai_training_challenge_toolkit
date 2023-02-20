@@ -90,7 +90,7 @@ You can get the detail instead of the counts :
 This allow to run the missing jobs and the jobs that are stopped/failed etc.
 
 ```
-% ./up.sh ovhaimax/kili
+% ./up.sh dockerhubuser/notebookimage
 run teams_prefix_10
 run teams_prefix_9
 run teams_prefix_8

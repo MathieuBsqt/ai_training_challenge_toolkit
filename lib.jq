@@ -11,11 +11,11 @@ def is_stopping:
 ;
 
 def select_only_team_tokens:
-   .[] | select(.spec.labelSelector | contains("kili_challenge_team"))
+   .[] | select(.spec.labelSelector | contains("ai_challenge_team"))
 ;
 
 def list_jobs($jobs; $tokens):
-   $jobs | .[] | .spec.labels.kili_challenge_team as $team_name | {
+   $jobs | .[] | .spec.labels.ai_challenge_team as $team_name | {
         id: .id,
         name: $team_name,
         state: .status.state,

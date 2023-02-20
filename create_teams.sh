@@ -20,7 +20,7 @@ echo "TEAM_NAMES: $@"
 (
     for team_number in $@; do
         team_name="${PREFIX}_team_${team_number}"
-        ovhai token create -o json -r "read" -l "kili_challenge_team=$team_name" $team_name
+        ovhai token create -o json -r "read" -l "ai_challenge_team=$team_name" $team_name
     done
 ) | jq  '{team:.spec.name, token:.status.value}' >> $TEAMS_JSON
 
